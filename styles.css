@@ -1,0 +1,294 @@
+:root {
+    /* カラーパレット: プレミアムなピンク/ベリー系のトーン */
+    --clr-bg: #fff5f8;
+    --clr-blob-1: #ffd5e5;
+    --clr-blob-2: #ffa8d5;
+    --clr-blob-3: #e88aab;
+    --clr-card-bg: rgba(255, 255, 255, 0.6);
+    --clr-text-main: #5c3341;
+    --clr-text-light: #8c586a;
+    --clr-primary: #e05f87;
+    --clr-primary-hover: #cc5275;
+    --clr-secondary: #f4618e;
+    --clr-secondary-hover: #e3527d;
+    --clr-tertiary: #dfd0d4;
+    --clr-tertiary-hover: #d0bfc4;
+    --clr-ring-bg: rgba(224, 95, 135, 0.15);
+    --clr-ring-fg: #e05f87;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--clr-bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--clr-text-main);
+    overflow: hidden;
+    position: relative;
+}
+
+/* バックグラウンドの装飾 (Blurs/Blobs) */
+.background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    filter: blur(80px);
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    animation: float 20s infinite ease-in-out alternate;
+    opacity: 0.6;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background-color: var(--clr-blob-1);
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: 350px;
+    height: 350px;
+    background-color: var(--clr-blob-2);
+    bottom: -50px;
+    right: -50px;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background-color: var(--clr-blob-3);
+    top: 40%;
+    left: 60%;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(30px, 50px) scale(1.1);
+    }
+
+    100% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+/* メインのタイマーカード (グラスモーフィズム) */
+.timer-card {
+    position: relative;
+    z-index: 10;
+    background: var(--clr-card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 32px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 40px rgba(92, 65, 51, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 420px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--clr-text-light);
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+}
+
+/* タイマー表示とプログレスリングを重ねるコンテナ */
+.time-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--clr-text-main);
+    letter-spacing: 1px;
+    pointer-events: none;
+    /* 下の入力要素がクリックできるように */
+    z-index: 2;
+}
+
+.progress-ring {
+    position: relative;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.1s linear;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.progress-ring__circle--bg {
+    stroke: var(--clr-ring-bg);
+}
+
+.progress-ring__circle--fg {
+    stroke: var(--clr-ring-fg);
+    stroke-linecap: round;
+}
+
+/* 入力グループ */
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.input-group.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.time-display.hidden {
+    opacity: 0;
+}
+
+.time-input {
+    width: 90px;
+    font-size: 3.5rem;
+    font-weight: 300;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--clr-text-light);
+    color: var(--clr-text-main);
+    text-align: center;
+    font-family: inherit;
+    outline: none;
+}
+
+.time-input:focus {
+    border-bottom-color: var(--clr-primary);
+}
+
+.time-input::-webkit-outer-spin-button,
+.time-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.colon {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--clr-text-main);
+}
+
+
+/* コントロールボタン */
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:active {
+    transform: scale(0.96);
+}
+
+.btn.hidden {
+    display: none;
+}
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    color: white;
+    box-shadow: 0 8px 16px rgba(224, 122, 95, 0.25);
+}
+
+.btn-primary:hover {
+    background-color: var(--clr-primary-hover);
+    box-shadow: 0 10px 20px rgba(224, 122, 95, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--clr-secondary);
+    color: white;
+    box-shadow: 0 8px 16px rgba(244, 162, 97, 0.25);
+}
+
+.btn-secondary:hover {
+    background-color: var(--clr-secondary-hover);
+    box-shadow: 0 10px 20px rgba(244, 162, 97, 0.3);
+}
+
+.btn-tertiary {
+    background-color: var(--clr-tertiary);
+    color: var(--clr-text-main);
+}
+
+.btn-tertiary:hover {
+    background-color: var(--clr-tertiary-hover);
+}
+
+.sound-test {
+    margin-top: 1rem;
+}
+
+.btn-text {
+    background: transparent;
+    border: none;
+    color: var(--clr-text-light);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.btn-text:hover {
+    color: var(--clr-text-main);
+    background: rgba(255, 255, 255, 0.3);
+}
